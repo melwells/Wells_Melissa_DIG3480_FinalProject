@@ -19,19 +19,23 @@ public class GameController : MonoBehaviour
   public Text pointsText;
   public Text restartText;
   public Text gameOverText;
+  public Text hardModeText;
   public GameObject backgroundScroll;
 
   private int points;
   private bool gameOver;
   private bool restart;
+  private bool hardMode;
 
   void Start()
   {
     points = 0;
     gameOver = false;
     restart = false;
+    hardMode = false;
     restartText.text = "";
     gameOverText.text = "";
+    hardModeText.text = "Hard Mode Off.";
     UpdateScore();
     StartCoroutine(SpawnWaves());
   }
@@ -50,6 +54,8 @@ public class GameController : MonoBehaviour
           SceneManager.LoadScene("Scene1");
         }
       }
+
+      UpdateHardMode();
   }
 
   IEnumerator SpawnWaves()
@@ -59,11 +65,29 @@ public class GameController : MonoBehaviour
     {
       for (int i = 0; i < hazardCount; i++)
       {
-        GameObject hazard = hazards [Random.Range (0, hazards.Length)];
+      /*  GameObject hazard = hazards [Random.Range (0, hazards.Length)];
         Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
         Quaternion spawnRotation = Quaternion.identity;
         Instantiate(hazard, spawnPosition, spawnRotation);
-        yield return new WaitForSeconds(spawnWait);
+        yield return new WaitForSeconds(spawnWait); */
+
+        if (hardMode == false)
+        {
+          GameObject hazard = hazards [Random.Range (0, hazards.Length)];
+          Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
+          Quaternion spawnRotation = Quaternion.identity;
+          Instantiate(hazard, spawnPosition, spawnRotation);
+          yield return new WaitForSeconds(spawnWait);
+        }
+
+        else if (hardMode != false)
+        {
+          GameObject hazard = hazards [Random.Range (0, 4)];
+          Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
+          Quaternion spawnRotation = Quaternion.identity;
+          Instantiate(hazard, spawnPosition, spawnRotation);
+          yield return new WaitForSeconds(spawnWait);
+        }
       }
       yield return new WaitForSeconds(waveWait);
       if (gameOver)
@@ -87,7 +111,9 @@ public class GameController : MonoBehaviour
     if (points >= 100)
     {
       bgMusic.Pause();
+      loseMusic.Pause();
       winMusic.PlayDelayed(0);
+      loseMusic.Pause();
       backgroundScroll.GetComponent<BGScroller>().scrollSpeed = (-10);
       gameOverText.text = "You Win! Game created by Melissa Wells.";
       gameOver = true;
@@ -101,5 +127,27 @@ public class GameController : MonoBehaviour
     loseMusic.PlayDelayed(0);
     gameOverText.text = "Game Over!";
     gameOver = true;
+  }
+
+  public void UpdateHardMode()
+  {
+    if (Input.GetKeyDown (KeyCode.Z))
+    {
+      if (hardMode == false)
+      {
+        hardMode = true;
+        hazardCount = 40;
+        waveWait = 1;
+        hardModeText.text = "Hard Mode On.";
+      }
+
+      else if (hardMode != false)
+      {
+        hardMode = false;
+        hazardCount = 10;
+        waveWait = 4;
+        hardModeText.text = "Hard Mode Off.";
+      }
+    }
   }
 }
