@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
 
 [System.Serializable]
@@ -21,6 +22,9 @@ public class PlayerController : MonoBehaviour
      private Rigidbody rb;
      private AudioSource audioSource;
 
+     private float timer = 0.0f;
+     private float pickupTime = 3.0f;
+
      private void Start()
      {
           rb = GetComponent<Rigidbody>();
@@ -34,6 +38,13 @@ public class PlayerController : MonoBehaviour
             nextFire = Time.time + fireRate;
             Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
             audioSource.Play();
+
+            if (Time.time > timer)
+            {
+              timer = Time.time + pickupTime;
+              speed = 10;
+              fireRate = 0.25f;
+            }
         }
      }
 

@@ -16,6 +16,11 @@ public class GameController : MonoBehaviour
   public AudioSource winMusic;
   public AudioSource loseMusic;
 
+  public ParticleSystem starfield;
+  public ParticleSystem starfieldDistant;
+  public ParticleSystem starfieldFast;
+  public ParticleSystem starfieldDistantFast;
+
   public Text pointsText;
   public Text restartText;
   public Text gameOverText;
@@ -36,6 +41,12 @@ public class GameController : MonoBehaviour
     restartText.text = "";
     gameOverText.text = "";
     hardModeText.text = "Hard Mode Off.";
+
+    starfield.Play();
+    starfieldDistant.Play();
+    starfieldFast.Pause();
+    starfieldDistantFast.Pause();
+
     UpdateScore();
     StartCoroutine(SpawnWaves());
   }
@@ -108,13 +119,19 @@ public class GameController : MonoBehaviour
   void UpdateScore()
   {
     pointsText.text = "Points: " + points;
-    if (points >= 100)
+    if (points >= 200)
     {
       bgMusic.Pause();
       loseMusic.Pause();
       winMusic.PlayDelayed(0);
       loseMusic.Pause();
       backgroundScroll.GetComponent<BGScroller>().scrollSpeed = (-10);
+
+      starfield.Pause();
+      starfieldDistant.Pause();
+      starfieldFast.Play();
+      starfieldDistantFast.Play();
+
       gameOverText.text = "You Win! Game created by Melissa Wells.";
       gameOver = true;
       restart = true;
